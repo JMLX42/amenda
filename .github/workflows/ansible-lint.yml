@@ -1,0 +1,50 @@
+name: Ansible Lint
+
+on: [push, pull_request]
+
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Ansible Playbook
+      uses: ansible/ansible-lint-action@c37fb7b4bda2c8cb18f4942716bae9f11b0dc9bc
+      with:
+        # FIXME
+        # Globbing is broken at the moment:
+        # https://github.com/ansible/ansible-lint-action/issues/30
+        #targets: "**/*.{yaml,yml}"
+        targets: |
+          provisioning/requirements.yml
+          provisioning/playbook.yml
+          provisioning/roles/amenda.analytics/defaults/main.yml
+          provisioning/roles/amenda.analytics/tasks/main.yml
+          provisioning/roles/amenda.forum/defaults/main.yml
+          provisioning/roles/amenda.forum/tasks/main.yml
+          provisioning/roles/amenda.logs/handlers/main.yml
+          provisioning/roles/amenda.logs/defaults/main.yml
+          provisioning/roles/amenda.logs/tasks/main.yml
+          provisioning/roles/amenda.monitoring/handlers/main.yml
+          provisioning/roles/amenda.monitoring/defaults/main/prometheus.yml
+          provisioning/roles/amenda.monitoring/defaults/main/grafana.yml
+          provisioning/roles/amenda.monitoring/defaults/main/main.yml
+          provisioning/roles/amenda.monitoring/tasks/prometheus.yml
+          provisioning/roles/amenda.monitoring/tasks/grafana.yml
+          provisioning/roles/amenda.monitoring/tasks/main.yml
+          provisioning/roles/amenda.reverse-proxy/handlers/main.yml
+          provisioning/roles/amenda.reverse-proxy/defaults/main.yml
+          provisioning/roles/amenda.reverse-proxy/tasks/main.yml
+          provisioning/roles/amenda.ssl-certs/tasks/main.yml
+          provisioning/hosts.yml
+          provisioning/host_vars/monitoring.yml
+          provisioning/host_vars/forum.yml
+          provisioning/host_vars/amenda.yml
+          provisioning/host_vars/analytics.yml
+          provisioning/group_vars/all/main.yml
+        # FIXME
+        # Fixing the version of ansible is broken at the moment:
+        # https://github.com/ansible/ansible-lint-action/issues/41
+        #override-deps: |
+        #  ansible==2.9
+        #  ansible-lint==4.3.7
+        args: ""
