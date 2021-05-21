@@ -1,0 +1,16 @@
+---
+
+matomo_version: 4.2.1
+matomo_fqdn: "{{ ansible_host }}"
+
+matomo_database_version: 10.3-debian-10
+matomo_database_root_password: "root"
+matomo_database_user: "matomo"
+matomo_database_password: "matomo"
+matomo_database_database: "matomo"
+
+matomo_user: "admin"
+matomo_password: "admin_42"
+matomo_email: "contact@{{ ansible_host }}"
+matomo_website_name: "{{ inventory_hostname }}"
+matomo_website_host: "{{ ansible_host }}"

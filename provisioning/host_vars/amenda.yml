@@ -1,0 +1,9 @@
+---
+
+nginx_proxy_letsencrypt_companion_email: "contact@{{ base_hostname }}"
+
+vouch_oauth_client_id: "{{ lookup('env', 'VOUCH_OAUTH_CLIENT_ID') }}"
+vouch_oauth_client_secret: "{{ lookup('env', 'VOUCH_OAUTH_CLIENT_SECRET') }}"
+vouch_whitelist: "{{ lookup('env', 'VOUCH_WHITELIST').split(',') }}"
+vouch_domains: "vouch.{{ base_hostname }}"
+vouch_oauth_callback_url: "https://sso.infra.{{ ansible_host }}/auth"

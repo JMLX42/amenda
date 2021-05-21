@@ -1,0 +1,10 @@
+---
+
+matomo_email: "contact@{{ base_hostname }}"
+matomo_website_name: "Amenda"
+matomo_website_host: "{{ base_hostname }}"
+matomo_database_root_password: "{{ lookup('env', 'MATOMO_DATABASE_ROOT_PASSWORD') | default('root', true) }}"
+matomo_database_username: "{{ lookup('env', 'MATOMO_DATABASE_USER') | default('admin', true) }}"
+matomo_database_password: "{{ lookup('env', 'MATOMO_PASSWORD') | default('admin_42', true) }}"
+matomo_user: "{{ lookup('env', 'MATOMO_USER') | default('admin', true) }}"
+matomo_password: "{{ lookup('env', 'MATOMO_PASSWORD') | default('admin_42', true) }}"

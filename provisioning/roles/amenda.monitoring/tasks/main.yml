@@ -1,0 +1,21 @@
+---
+
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /srv/monitoring
+
+- include: prometheus.yml
+
+- include: grafana.yml
+
+- name: template docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /srv/monitoring/docker-compose.yml
+
+- name: start monitoring
+  docker_compose:
+    project_src: /srv/monitoring

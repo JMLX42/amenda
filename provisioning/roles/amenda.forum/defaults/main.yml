@@ -1,0 +1,25 @@
+---
+
+# https://hub.docker.com/r/bitnami/discourse/tags
+discourse_version: 2.6.3
+discourse_fqdn: "{{ ansible_host }}"
+discourse_username: "admin"
+discourse_password: "admin1234567890"
+discourse_sitename: "My Site!"
+discourse_email: "discourse@{{ ansible_hostname }}"
+discourse_skip_install: true
+# https://hub.docker.com/r/bitnami/postgresql/tags
+discourse_postrgesql_version: 12
+discourse_postgresql_password: postgres
+discourse_postrgesql_database: discourse
+# https://hub.docker.com/r/bitnami/redis/tags
+discourse_redis_version: 6.2
+
+discourse_smtp_host: ""
+discourse_smtp_port: 587
+discourse_smtp_user: ""
+discourse_smtp_password: ""
+discourse_smtp_tls: true
+discourse_smtp_auth: plain
+
+discourse_redis_password: redis

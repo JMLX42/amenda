@@ -1,0 +1,57 @@
+{{ ansible_managed | comment }}
+version: '3'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.6.2
+    restart: unless-stopped
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /data/elasticsearch/data/:/usr/share/elasticsearch/data
+    networks:
+      - elasticsearch
+    labels:
+      org.label-schema.group: "logs"
+  kibana:
+    image: kibana:7.6.2
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+    networks:
+      - elasticsearch
+      - nginx_reverse-proxy
+    environment:
+      VIRTUAL_HOST: "{{ kibana_fqdn }}"
+      VIRTUAL_PORT: "5601"
+      LETSENCRYPT_HOST: "{{ kibana_fqdn }}"
+    labels:
+      org.label-schema.group: "logs"
+  fluent-bit:
+    image: fluent/fluent-bit:1.7.2
+    restart: unless-stopped
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    command: /fluent-bit/bin/fluent-bit -c /fluent-bit/config/fluent-bit.conf
+    volumes:
+      - /data/fluent-bit/config/fluent-bit.conf:/fluent-bit/config/fluent-bit.conf
+    depends_on:
+      - elasticsearch
+    networks:
+      - elasticsearch
+    labels:
+      org.label-schema.group: "logs"
+    logging:
+      options:
+        max-size: 100m
+
+networks:
+  elasticsearch:
+  nginx_reverse-proxy:
+    external: true

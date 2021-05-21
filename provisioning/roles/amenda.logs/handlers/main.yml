@@ -1,0 +1,11 @@
+---
+
+- name: restart EFK
+  command: docker-compose restart
+  args:
+    chdir: /srv/efk
+
+- name: restart fluent-bit
+  command: docker-compose restart fluent-bit
+  args:
+    chdir: /srv/efk

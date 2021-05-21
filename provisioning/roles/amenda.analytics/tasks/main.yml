@@ -1,0 +1,27 @@
+---
+
+- name: create matomo directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /srv/matomo
+    - /data/matomo/
+
+- name: create matomo mounted directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rx
+  loop:
+    - /data/matomo/mariadb
+    - /data/matomo/data
+
+- name: template matomo docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /srv/matomo/docker-compose.yml
+
+- name: start matomo
+  docker_compose:
+    project_src: /srv/matomo

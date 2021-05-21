@@ -1,0 +1,120 @@
+---
+
+- hosts:
+    - server
+  pre_tasks:
+    - name: update apt cache
+      apt:
+        update_cache: yes
+      tags: always
+  roles:
+    - role: geerlingguy.pip
+      pip_install_packages: ['docker', 'docker-compose']
+      tags: always
+    - role: geerlingguy.docker
+      docker_users: ["{{ ansible_ssh_user }}"]
+      tags: always
+  tasks:
+    - block:
+      - name: Install fail2ban
+        apt:
+          package: fail2ban
+      - name: Ensure fail2ban is started
+        service:
+          name: fail2ban
+          state: started
+      tags:
+        - security
+    - block:
+      - name: Enable the firewall
+        ufw:
+          state: enabled
+          policy: deny
+        retries: 3
+        delay: 3
+        register: result
+        until: result is succeeded
+      - name: Allow the SSH (22) port
+        ufw:
+          rule: allow
+          port: '22'
+        retries: 3
+        delay: 3
+        register: result
+        until: result is succeeded
+      tags:
+        - security
+        - firewall
+
+- hosts:
+    - webserver
+  roles:
+    - role: amenda.reverse-proxy
+      tags:
+        - always
+        - reverse-proxy
+  tasks:
+    - name: Allow the HTTP (80) port
+      ufw:
+        rule: allow
+        port: '80'
+      retries: 3
+      delay: 3
+      register: result
+      until: result is succeeded
+      tags:
+        - security
+        - firewall
+    - name: Allow the HTTPS (443) port
+      ufw:
+        rule: allow
+        port: '443'
+      retries: 3
+      delay: 3
+      register: result
+      until: result is succeeded
+      tags:
+        - security
+        - firewall
+
+- hosts:
+    - ssl
+  tasks:
+    - name: generate self-signed SSL certs
+      include_role:
+        name: amenda.ssl-certs
+      when:
+        - genereate_ssl_certs is defined
+        - genereate_ssl_certs
+      tags:
+        - security
+        - ssl
+
+- hosts:
+    - logs
+  roles:
+    - role: amenda.logs
+      tags:
+        - always
+        - logs
+
+- hosts:
+    - forum
+  roles:
+    - role: amenda.forum
+      tags:
+        - forum
+
+- hosts:
+    - analytics
+  roles:
+    - role: amenda.analytics
+      tags:
+        - analytics
+
+- hosts:
+    - monitoring
+  roles:
+    - role: amenda.monitoring
+      tags:
+        - monitoring
