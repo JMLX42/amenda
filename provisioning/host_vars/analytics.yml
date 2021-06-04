@@ -3,8 +3,12 @@
 matomo_email: "contact@{{ base_hostname }}"
 matomo_website_name: "Amenda"
 matomo_website_host: "{{ base_hostname }}"
-matomo_database_root_password: "{{ lookup('env', 'MATOMO_DATABASE_ROOT_PASSWORD') | default('root', true) }}"
-matomo_database_username: "{{ lookup('env', 'MATOMO_DATABASE_USER') | default('admin', true) }}"
-matomo_database_password: "{{ lookup('env', 'MATOMO_PASSWORD') | default('admin_42', true) }}"
-matomo_user: "{{ lookup('env', 'MATOMO_USER') | default('admin', true) }}"
-matomo_password: "{{ lookup('env', 'MATOMO_PASSWORD') | default('admin_42', true) }}"
+
+matomo_database_root_password: "{{ vault_matomo_database_root_password | default(default_matomo_database_root_password) }}"
+matomo_database_password: "{{ vault_matomo_database_password | default(default_matomo_database_password) }}"
+matomo_password: "{{ vault_matomo_password | default(default_matomo_password) }}"
+
+vouch_public_locations:
+  # Allow Vouch to bypass authentication for
+  # the routes used to perform analytics.
+  - "~ /matomo\\.(js|php)"
