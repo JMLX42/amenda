@@ -1,0 +1,24 @@
+---
+
+# https://hub.docker.com/r/jwilder/nginx-proxy/tags?page=1&ordering=last_updated
+nginx_proxy_version: 0.9.3
+nginx_proxy_srv_dir: "/srv/nginx-proxy"
+
+nginx_proxy_acme_companion_enabled: true
+# https://hub.docker.com/r/jrcs/letsencrypt-nginx-proxy-companion/tags?page=1&ordering=last_updated
+nginx_proxy_acme_companion_version: 2.1.0
+nginx_proxy_acme_companion_email: "admin@{{ ansible_host }}"
+
+# https://hub.docker.com/r/voucher/vouch-proxy/tags?page=1&ordering=last_updated
+vouch_version: 0.23.1
+vouch_enabled: true
+vouch_testing: false
+vouch_domains: "vouch.{{ ansible_host }}"
+vouch_fqdn: "sso.{{ vouch_domains }}"
+vouch_whitelist: []
+vouch_cookie_domain: "{{ vouch_domains }}"
+vouch_oauth_provider: "github"
+vouch_oauth_client_id:
+vouch_oauth_client_secret:
+vouch_oauth_callback_url: "https://sso.{{ vouch_domains }}/auth"
+vouch_debug: false

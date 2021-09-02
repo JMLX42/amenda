@@ -1,3 +1,4 @@
 ---
 
-base_hostname: "{{ default_base_hostname }}"
+base_hostname_tld: ".io"
+base_hostname: "govlab{{ base_hostname_tld }}"

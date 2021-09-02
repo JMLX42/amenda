@@ -1,0 +1,53 @@
+---
+
+- name: create nginx directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ nginx_proxy_srv_dir }}"
+    - "{{ nginx_proxy_srv_dir }}/certs"
+    - "{{ nginx_proxy_srv_dir }}/vhost.d"
+
+- name: template nginx docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ nginx_proxy_srv_dir }}/docker-compose.yml"
+
+- name: enable vouch vhosts
+  block:
+    - name: create vouch.conf
+      template:
+        src: vouch.conf.j2
+        dest: "{{ nginx_proxy_srv_dir }}/vhost.d/{{ hostvars[item]['ansible_host'] }}"
+      loop: "{{ groups['vouch'] }}"
+      notify: restart nginx-proxy
+    - name: create vouch_location.conf
+      template:
+        src: vouch_location.conf.j2
+        dest: "{{ nginx_proxy_srv_dir }}/vhost.d/{{ hostvars[item]['ansible_host'] }}_location"
+      loop: "{{ groups['vouch'] }}"
+      notify: restart nginx-proxy
+  when: vouch_enabled | bool
+
+- name: disable vouch vhosts
+  block:
+    - name: delete vouch.conf
+      file:
+        path: "{{ nginx_proxy_srv_dir }}/vhost.d/{{ hostvars[item]['ansible_host'] }}"
+        state: absent
+      loop: "{{ groups['vouch'] }}"
+      notify: restart nginx-proxy
+    - name: delete vouch_location.conf
+      file:
+        path: "{{ nginx_proxy_srv_dir }}/vhost.d/{{ hostvars[item]['ansible_host'] }}_location"
+        state: absent
+      loop: "{{ groups['vouch'] }}"
+      notify: restart nginx-proxy
+  when:
+    - "not (vouch_enabled | bool)"
+    - "'vouch' in groups"
+
+- name: start nginx reverse-proxy
+  docker_compose:
+    project_src: "{{ nginx_proxy_srv_dir }}"

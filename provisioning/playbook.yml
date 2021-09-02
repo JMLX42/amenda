@@ -49,7 +49,7 @@
 - hosts:
     - webserver
   roles:
-    - role: amenda.reverse-proxy
+    - role: govlab.nginx-proxy
       tags:
         - always
         - reverse-proxy
@@ -82,39 +82,45 @@
   tasks:
     - name: generate self-signed SSL certs
       include_role:
-        name: amenda.ssl-certs
+        name: govlab.ssl-certs
       when:
-        - genereate_ssl_certs is defined
-        - genereate_ssl_certs
+        - nginx_proxy_acme_companion_enabled is not defined or not nginx_proxy_acme_companion_enabled
       tags:
         - security
         - ssl
 
-- hosts:
-    - logs
-  roles:
-    - role: amenda.logs
-      tags:
-        - always
-        - logs
+# - hosts:
+#     - logs
+#   roles:
+#     - role: govlab.efk
+#       tags:
+#         - always
+#         - logs
 
 - hosts:
-    - forum
+    - community
   roles:
-    - role: amenda.forum
+    - role: govlab.discourse
       tags:
-        - forum
+        - community
 
 - hosts:
     - analytics
   roles:
-    - role: amenda.analytics
+    - role: govlab.matomo
       tags:
         - analytics
 
+# - hosts:
+#     - monitoring
+#   roles:
+#     - role: govlab.monitoring
+#       tags:
+#         - monitoring
+
 - hosts:
-    - monitoring
+    - cloud
   roles:
-    - role: amenda.monitoring
+    - role: govlab.nextcloud
       tags:
-        - monitoring
+        - cloud

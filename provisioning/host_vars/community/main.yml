@@ -1,0 +1,11 @@
+---
+
+discourse_email: "contact@{{ base_hostname }}"
+discourse_sitename: 'Community | GovLab'
+discourse_postgresql_password: "{{ vault_discourse_postgresql_password | default(default_discourse_postgresql_password) }}"
+discourse_smtp_host: "{{ vault_discourse_smtp_host | default(default_discourse_smtp_host) }}"
+discourse_smtp_user: "{{ vault_discourse_smtp_user | default(default_discourse_smtp_user) }}"
+discourse_smtp_password: "{{ vault_discourse_smtp_password | default(default_discourse_smtp_password) }}"
+discourse_redis_password: "{{ vault_discourse_redis_password | default(default_discourse_redis_password) }}"
+discourse_username: "{{ vault_discourse_username | default(default_discourse_username) }}"
+discourse_password: "{{ vault_discourse_password | default(default_discourse_password) }}"

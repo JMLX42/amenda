@@ -1,7 +1,0 @@
----
-
-nginx_proxy_letsencrypt_companion_email: "contact@{{ base_hostname }}"
-
-vouch_domains: "infra.{{ base_hostname }}"
-vouch_oauth_callback_url: "https://sso.infra.{{ ansible_host }}/auth"
-vouch_whitelist: "{{ vault_vouch_whitelist | default(default_vouch_whitelist) }}"

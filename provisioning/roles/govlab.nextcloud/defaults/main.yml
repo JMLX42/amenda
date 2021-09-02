@@ -1,0 +1,39 @@
+---
+
+nextcloud_version: "22.1.1"
+nextcloud_fqdn: "{{ ansible_host }}"
+nextcloud_admin_user: "admin"
+nextcloud_admin_password: "admin"
+
+nextcloud_mariadb_version: "10.5.11"
+nextcloud_database_name: "nextcloud"
+nextcloud_database_root_password: "root"
+nextcloud_database_user: "nextcloud"
+nextcloud_database_password: "password"
+
+nextcloud_objectstore_s3_enabled: false
+nextcloud_objectstore_s3_host: ""
+nextcloud_objectstore_s3_bucket: ""
+nextcloud_objectstore_s3_key: ""
+nextcloud_objectstore_s3_secret: ""
+nextcloud_objectstore_s3_port: "443"
+nextcloud_objectstore_s3_ssl: true
+nextcloud_objectstore_s3_region: ""
+nextcloud_objectstore_s3_usepath_style: true
+
+nextcloud_srv_dir: "/srv/nextcloud"
+nextcloud_html_dir: "/opt/nextcloud/html"
+nextcloud_custom_apps_dir: "/opt/nextcloud/custom_apps"
+nextcloud_config_dir: "/opt/nextcloud/config"
+nextcloud_data_dir: "/opt/nextcloud/data"
+nextcloud_database_dir: "/opt/nextcloud/database"
+nextcloud_cache_dir: "/opt/nextcloud/cache"
+nextcloud_nginx_proxy_vhost_dir: ""
+
+nextcloud_onlyoffice_document_server_enabled: false
+nextcloud_onlyoffice_document_server_docker_network: ""
+nextcloud_onlyoffice_document_server_url: ""
+nextcloud_onlyoffice_document_server_internal_url: ""
+
+nextcloud_onlyoffice_document_server_version: "6.4.0"
+nextcloud_onlyoffice_document_server_fqdn: "document.{{ ansible_host }}"

@@ -1,0 +1,20 @@
+---
+
+nextcloud_admin_password: "{{ vault_nextcloud_admin_password | default(default_nextcloud_admin_password)}}"
+
+nextcloud_nginx_proxy_vhost_dir: "/srv/nginx-proxy/vhost.d"
+
+nextcloud_onlyoffice_document_server_enabled: true
+nextcloud_onlyoffice_document_server_docker_network: "onlyoffice-document-server_server"
+nextcloud_onlyoffice_document_server_url: "https://document.cloud.{{ base_hostname }}/"
+nextcloud_onlyoffice_document_server_internal_url: "http://onlyoffice-document-server/"
+
+nextcloud_objectstore_s3_enabled: "{{ base_hostname_tld == '.io' }}"
+nextcloud_objectstore_s3_host: "s3.fr-par.scw.cloud"
+nextcloud_objectstore_s3_bucket: "govlab-nextcloud"
+nextcloud_objectstore_s3_key: "{{ vault_nextcloud_s3_key | default('') }}"
+nextcloud_objectstore_s3_secret: "{{ vault_nextcloud_s3_secret | default('') }}"
+nextcloud_objectstore_s3_port: "443"
+nextcloud_objectstore_s3_ssl: true
+nextcloud_objectstore_s3_region: "fr-par"
+nextcloud_objectstore_s3_usepath_style: true

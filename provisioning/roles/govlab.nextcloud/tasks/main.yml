@@ -1,0 +1,6 @@
+---
+
+- include: nextcloud.yml
+
+- include: onlyoffice-document-server.yml
+  when: nextcloud_onlyoffice_document_server_enabled

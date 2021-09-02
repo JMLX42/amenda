@@ -1,0 +1,26 @@
+---
+
+- name: wait for NextCloud to come up
+  uri:
+    url: "https://{{ nextcloud_fqdn }}/login"
+    method: GET
+    status_code: 200
+    validate_certs: no
+  register: result
+  until: result.status == 200
+  retries: 30
+  delay: 3
+
+- name: configure onlyoffice document server
+  command: docker-compose exec -u www-data app php occ --no-warnings {{ item }}
+  args:
+    chdir: /srv/nextcloud
+  loop:
+    - "app:install onlyoffice"
+    - "config:system:set onlyoffice DocumentServerUrl --value='{{ nextcloud_onlyoffice_document_server_url }}'"
+    - "config:system:set onlyoffice DocumentServerInternalUrl --value='{{ nextcloud_onlyoffice_document_server_internal_url }}'"
+    - "config:system:set onlyoffice StorageUrl --value='http://app/'"
+    - "config:system:set allow_local_remote_servers --value=true"
+  when: nextcloud_onlyoffice_document_server_enabled
+  register: result
+  failed_when: result.rc != 0 and "already installed" not in result.stdout

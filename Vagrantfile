@@ -7,14 +7,14 @@ Vagrant.configure("2") do |config|
 
   config.vagrant.plugins = {"vagrant-env" => {"version" => "0.0.3"}}
 
-  config.vm.define "amenda" do |host|
+  config.vm.define "govlab" do |host|
     host.vm.box = "ubuntu/focal64"
-    host.vm.hostname = "amenda.fr.test"
+    host.vm.hostname = "govlab"
     host.vm.network "private_network", ip: "192.168.142.2"
 
     host.vm.provider "virtualbox" do |vb|
       vb.memory = 4096
-      vb.cpus = 2
+      vb.cpus = 3
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
   end
@@ -32,7 +32,6 @@ Vagrant.configure("2") do |config|
     host.vm.provision "shell", path: "./script/install_ansible.sh"
 
     host.vm.provision "ansible_local" do |ansible|
-      ansible.version = "2.10.9"
       ansible.install = false
       ansible.verbose = 'v'
       ansible.limit = ENV['ANSIBLE_LIMIT'] || "all"
@@ -44,8 +43,7 @@ Vagrant.configure("2") do |config|
       ansible.playbook_command = "/vagrant/script/ansible-playbook.sh"
       ansible.extra_vars = {
         ansible_ssh_user: "vagrant",
-        base_hostname: "amenda.fr.test",
-        genereate_ssl_certs: true,
+        base_hostname_tld: ".io.test",
         nginx_proxy_letsencrypt_companion_enabled: false,
         vouch_enabled: false,
       }

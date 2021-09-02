@@ -1,6 +1,0 @@
----
-
-granafa_fqdn: "{{ hostvars['monitoring'].ansible_host }}"
-grafana_admin_password: "{{ vault_grafana_admin_password | default(default_grafana_admin_password) }}"
-
-prometheus_fqdn: "{{ hostvars['metrics'].ansible_host }}"

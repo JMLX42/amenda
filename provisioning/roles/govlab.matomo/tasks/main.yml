@@ -1,0 +1,50 @@
+---
+
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /srv/matomo
+    - /data/matomo/
+
+- name: create mounted directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rx
+  loop:
+    - /data/matomo/mariadb
+    - /data/matomo/data
+
+- name: download plugins
+  block:
+    - apt:
+        name: unzip
+    - unarchive:
+        src: "https://plugins.matomo.org/api/2.0/plugins/{{ item.name }}/download/{{ item.version }}"
+        dest: /data/matomo/data/plugins
+        remote_src: true
+        mode: u=rwx,g=rwx,o=rx
+      loop: "{{ matomo_plugins }}"
+
+- name: template docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /srv/matomo/docker-compose.yml
+
+- name: start matomo
+  docker_compose:
+    project_src: /srv/matomo
+
+- name: wait for config.ini.php to be written
+  wait_for:
+    path: /data/matomo/data/config/config.ini.php
+    search_regex: '^\[General\]$'
+
+- name: set "assume_secure_protocol = 1"
+  lineinfile:
+    path: /data/matomo/data/config/config.ini.php
+    line: "assume_secure_protocol = 1"
+    insertafter: '^\[General\]$'
+    state: present

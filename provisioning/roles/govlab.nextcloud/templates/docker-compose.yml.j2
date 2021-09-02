@@ -1,0 +1,116 @@
+{{ ansible_managed | comment }}
+version: '3'
+
+services:
+  app:
+    image: nextcloud:{{ nextcloud_version }}
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - {{ nextcloud_html_dir }}:/var/www/html
+      - {{ nextcloud_custom_apps_dir }}:/var/www/html/custom_apps
+      - {{ nextcloud_config_dir }}:/var/www/html/config
+      - {{ nextcloud_data_dir }}:/var/www/html/data
+    networks:
+      - server
+      - nginx-proxy_reverse-proxy
+    environment:
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
+      NEXTCLOUD_TRUSTED_DOMAINS: "{{ nextcloud_fqdn }} app"
+      MYSQL_HOST: "db"
+      MYSQL_PASSWORD: "{{ nextcloud_database_password }}"
+      MYSQL_DATABASE: "{{ nextcloud_database_name }}"
+      MYSQL_USER: "{{ nextcloud_database_user }}"
+      REDIS_HOST: "redis"
+{% if nextcloud_objectstore_s3_enabled %}
+      OBJECTSTORE_S3_HOST: "{{ nextcloud_objectstore_s3_host }}"
+      OBJECTSTORE_S3_BUCKET: "{{ nextcloud_objectstore_s3_bucket }}"
+      OBJECTSTORE_S3_KEY: "{{ nextcloud_objectstore_s3_key }}"
+      OBJECTSTORE_S3_SECRET: "{{ nextcloud_objectstore_s3_secret }}"
+      OBJECTSTORE_S3_PORT: "{{ nextcloud_objectstore_s3_port }}"
+      OBJECTSTORE_S3_SSL: "{{ nextcloud_objectstore_s3_ssl | to_json}}"
+      OBJECTSTORE_S3_REGION: "{{ nextcloud_objectstore_s3_region }}"
+      OBJECTSTORE_S3_USEPATH_STYLE: "{{ nextcloud_objectstore_s3_usepath_style | to_json }}"
+{% endif %}
+      VIRTUAL_HOST: "{{ nextcloud_fqdn }}"
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: "{{ nextcloud_fqdn }}"
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    # labels:
+    #   org.label-schema.group: "nextcloud"
+  cron:
+    image: nextcloud:{{ nextcloud_version }}
+    restart: unless-stopped
+    volumes:
+      - {{ nextcloud_html_dir }}:/var/www/html
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
+  db:
+    image: "mariadb:{{ nextcloud_mariadb_version }}"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "{{ nextcloud_database_root_password }}"
+      MYSQL_PASSWORD: "{{ nextcloud_database_password }}"
+      MYSQL_DATABASE: "{{ nextcloud_database_name }}"
+      MYSQL_USER: "{{ nextcloud_database_user }}"
+    volumes:
+      - '{{ nextcloud_database_dir }}:/var/lib/mysql'
+    networks:
+      - server
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    # labels:
+    #   org.label-schema.group: "nextcloud"
+  redis:
+    image: "redis:6.2.4"
+    restart: unless-stopped
+    networks:
+      - server
+    volumes:
+      - "{{ nextcloud_cache_dir }}:/data"
+{% if nextcloud_onlyoffice_document_server_enabled %}
+  onlyoffice-document-server:
+    image: onlyoffice/documentserver:{{ nextcloud_onlyoffice_document_server_version }}
+    restart: unless-stopped
+    volumes:
+      - document_data:/var/www/onlyoffice/Data
+      - document_log:/var/log/onlyoffice
+    networks:
+      - server
+      - nginx-proxy_reverse-proxy
+    environment:
+      VIRTUAL_HOST: "{{ nextcloud_onlyoffice_document_server_fqdn }}"
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: "{{ nextcloud_onlyoffice_document_server_fqdn }}"
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    # labels:
+    #   org.label-schema.group: "onlyoffice"
+{% endif %}
+
+volumes:
+  document_data:
+  document_log:
+
+networks:
+  server:
+  nginx-proxy_reverse-proxy:
+    external: true

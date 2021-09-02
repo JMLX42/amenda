@@ -1,8 +1,15 @@
 ---
 
-default_base_hostname: amenda.fr.test
-
 default_vouch_whitelist: []
+
+default_govlab_io_ssh_key: "/vagrant/.vagrant/machines/govlab/virtualbox/private_key"
+default_community_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_analytics_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_monitoring_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_metrics_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_logs_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_cloud_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_document_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
 
 default_matomo_database_root_password: 'password'
 default_matomo_database_password: 'password'
@@ -17,3 +24,5 @@ default_discourse_username: 'admin'
 default_discourse_password: 'adminadmin42'
 
 default_grafana_admin_password: 'password'
+
+default_nextcloud_admin_password: "admin"

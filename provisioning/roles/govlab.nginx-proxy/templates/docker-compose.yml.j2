@@ -1,0 +1,101 @@
+{{ ansible_managed | comment }}
+version: "3.3"
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:{{ nginx_proxy_version }}
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - reverse-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+{% if not nginx_proxy_acme_companion_enabled %}
+      - {{ nginx_proxy_srv_dir }}/certs:/etc/nginx/certs:ro
+{% else %}
+      - certs:/etc/nginx/certs
+{% endif %}
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    labels:
+      org.label-schema.group: "reverse-proxy"
+{% if nginx_proxy_acme_companion_enabled %}
+  acme-companion:
+    image: nginxproxy/acme-companion:{{ nginx_proxy_acme_companion_version }}
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:rw
+    environment:
+      DEFAULT_EMAIL: "{{ nginx_proxy_acme_companion_email }}"
+      NGINX_PROXY_CONTAINER: "nginx-proxy"
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    labels:
+      org.label-schema.group: "reverse-proxy"
+{% endif %}
+{% if vouch_enabled %}
+  vouch:
+    image: voucher/vouch-proxy:alpine-{{ vouch_version }}
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: "localhost:24224"
+    #     fluentd-async: "true"
+    #     labels: "org.label-schema.group"
+    labels:
+      org.label-schema.group: "reverse-proxy"
+    environment:
+{% if vouch_debug %}
+      VOUCH_LOGLEVEL: "debug"
+      VOUCH_TESTING: "{{ vouch_testing | ternary('true', 'false') }}"
+{% endif %}
+      VOUCH_DOMAINS: "{{ vouch_domains }}"
+      VOUCH_WHITELIST: "{{ vouch_whitelist | join(',') }}"
+      VOUCH_COOKIE_DOMAIN: "{{ vouch_cookie_domain }}"
+      OAUTH_PROVIDER: "{{ vouch_oauth_provider }}"
+      OAUTH_CLIENT_ID: "{{ vouch_oauth_client_id }}"
+      OAUTH_CLIENT_SECRET: "{{ vouch_oauth_client_secret }}"
+      OAUTH_CALLBACK_URL: "{{ vouch_oauth_callback_url }}"
+      VIRTUAL_HOST: "{{ vouch_fqdn }}"
+      VIRTUAL_PORT: "9090"
+      LETSENCRYPT_HOST: "{{ vouch_fqdn }}"
+{% endif %}
+
+volumes:
+  conf:
+  html:
+  dhparam:
+  acme:
+  certs:
+  vhost:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: {{ nginx_proxy_srv_dir }}/vhost.d
+
+networks:
+  reverse-proxy:

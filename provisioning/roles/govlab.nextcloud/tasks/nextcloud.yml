@@ -1,0 +1,35 @@
+---
+
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ nextcloud_srv_dir }}"
+
+- name: create mounted directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rx
+  loop:
+    - "{{ nextcloud_html_dir }}"
+    - "{{ nextcloud_custom_apps_dir }}"
+    - "{{ nextcloud_config_dir }}"
+    - "{{ nextcloud_data_dir }}"
+    - "{{ nextcloud_database_dir }}"
+
+- name: template docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ nextcloud_srv_dir }}/docker-compose.yml"
+
+- name: copy nginx configuration
+  copy:
+    src: nginx-proxy.conf
+    dest: "{{ nextcloud_nginx_proxy_vhost_dir }}/{{ nextcloud_fqdn }}"
+  when: nextcloud_nginx_proxy_vhost_dir | length > 0
+
+- name: start nextcloud
+  docker_compose:
+    project_src: "{{ nextcloud_srv_dir }}"

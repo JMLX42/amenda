@@ -1,4 +1,0 @@
----
-
-granafa_fqdn: "grafana.{{ ansible_hostname }}"
-prometheus_fqdn: "prometheus.{{ ansible_hostname }}"
