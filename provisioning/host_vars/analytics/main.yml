@@ -1,5 +1,7 @@
 ---
 
+matomo_fqdn: "analytics.infra.{{ base_hostname }}"
+
 matomo_email: "contact@{{ base_hostname }}"
 matomo_website_name: "GovLab"
 matomo_website_host: "{{ base_hostname }}"

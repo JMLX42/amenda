@@ -1,7 +1,8 @@
 #!/bin/bash
 set -o nounset -o pipefail -o errexit
 
-DOTENV=$(dirname "$0")/../.env
+DIR=$(dirname "$0")
+DOTENV=${DIR}/../.env
 
 # Load all variables from .env and export them all for Ansible to read
 if [ -f ${DOTENV} ]; then
@@ -9,6 +10,8 @@ if [ -f ${DOTENV} ]; then
     source ${DOTENV}
     set +o allexport
 fi
+
+export ANSIBLE_CONFIG="${DIR}/provisioning/ansible.cfg"
 
 # Run Ansible
 exec ansible-playbook "$@"

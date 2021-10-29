@@ -1,5 +1,6 @@
 ---
 
+discourse_fqdn: "community.{{ base_hostname }}"
 discourse_email: "contact@{{ base_hostname }}"
 discourse_sitename: 'Community | GovLab'
 discourse_postgresql_password: "{{ vault_discourse_postgresql_password | default(default_discourse_postgresql_password) }}"

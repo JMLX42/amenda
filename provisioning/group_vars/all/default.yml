@@ -26,3 +26,4 @@ default_discourse_password: 'adminadmin42'
 default_grafana_admin_password: 'password'
 
 default_nextcloud_admin_password: "admin"
+default_nextcloud_database_password: "password"

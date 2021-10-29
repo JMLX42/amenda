@@ -4,7 +4,7 @@ nginx_proxy_acme_companion_enabled: true
 nginx_proxy_acme_companion_email: "contact@{{ base_hostname }}"
 
 vouch_domains: "infra.{{ base_hostname }}"
-vouch_oauth_callback_url: "https://sso.infra.{{ ansible_host }}/auth"
+vouch_oauth_callback_url: "https://sso.infra.{{ base_hostname }}/auth"
 vouch_whitelist: "{{ vault_vouch_whitelist | default(default_vouch_whitelist) }}"
 vouch_oauth_client_id: "{{ vault_vouch_oauth_client_id }}"
 vouch_oauth_client_secret: "{{ vault_vouch_oauth_client_secret }}"

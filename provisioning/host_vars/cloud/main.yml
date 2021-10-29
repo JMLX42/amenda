@@ -1,12 +1,15 @@
 ---
 
+nextcloud_fqdn: "cloud.{{ base_hostname }}"
 nextcloud_admin_password: "{{ vault_nextcloud_admin_password | default(default_nextcloud_admin_password)}}"
-
 nextcloud_nginx_proxy_vhost_dir: "/srv/nginx-proxy/vhost.d"
 
+nextcloud_database_password: "{{ vault_nextcloud_database_password | default(default_nextcloud_database_password) }}"
+nextcloud_database_dir: /data/nextcloud/database
+
 nextcloud_onlyoffice_document_server_enabled: true
-nextcloud_onlyoffice_document_server_docker_network: "onlyoffice-document-server_server"
-nextcloud_onlyoffice_document_server_url: "https://document.cloud.{{ base_hostname }}/"
+nextcloud_onlyoffice_document_server_fqdn: "document.cloud.{{ base_hostname }}"
+nextcloud_onlyoffice_document_server_url: "https://{{ nextcloud_onlyoffice_document_server_fqdn }}/"
 nextcloud_onlyoffice_document_server_internal_url: "http://onlyoffice-document-server/"
 
 nextcloud_objectstore_s3_enabled: "{{ base_hostname_tld == '.io' }}"

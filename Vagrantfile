@@ -36,7 +36,6 @@ Vagrant.configure("2") do |config|
       ansible.verbose = 'v'
       ansible.limit = ENV['ANSIBLE_LIMIT'] || "all"
       ansible.raw_arguments = ENV['ANSIBLE_EXTRA_ARGS']
-      ansible.config_file = "provisioning/ansible.cfg"
       ansible.playbook = "provisioning/playbook.yml"
       ansible.inventory_path = "provisioning/hosts.yml"
       ansible.become = true

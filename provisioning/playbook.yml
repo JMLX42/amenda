@@ -89,14 +89,6 @@
         - security
         - ssl
 
-# - hosts:
-#     - logs
-#   roles:
-#     - role: govlab.efk
-#       tags:
-#         - always
-#         - logs
-
 - hosts:
     - community
   roles:
@@ -110,13 +102,6 @@
     - role: govlab.matomo
       tags:
         - analytics
-
-# - hosts:
-#     - monitoring
-#   roles:
-#     - role: govlab.monitoring
-#       tags:
-#         - monitoring
 
 - hosts:
     - cloud
