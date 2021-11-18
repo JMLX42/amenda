@@ -1,0 +1,20 @@
+---
+
+ipfs_api_fqdn: "{{ ansible_host }}"
+
+ipfs_version: "master-2021-11-17-0c2f9d5"
+
+ipfs_nginx_proxy_vhost_dir: ""
+
+ipfs_srv_dir: "/srv/ipfs"
+ipfs_staging_dir: "/opt/ipfs/staging"
+ipfs_data_dir: "/opt/ipfs/data"
+
+ipfs_config:
+  API:
+    HTTPHeaders:
+      Access-Control-Allow-Origin:
+        - "https://{{ ipfs_api_fqdn }}"
+      Access-Control-Allow-Methods:
+        - "PUT"
+        - "POST"

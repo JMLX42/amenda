@@ -10,6 +10,7 @@ default_metrics_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
 default_logs_infra_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
 default_cloud_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
 default_document_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
+default_ipfs_govlab_io_ssh_key: "{{ default_govlab_io_ssh_key }}"
 
 default_matomo_database_root_password: 'password'
 default_matomo_database_password: 'password'
