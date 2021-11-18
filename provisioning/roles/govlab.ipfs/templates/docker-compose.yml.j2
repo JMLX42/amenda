@@ -1,0 +1,24 @@
+{{ ansible_managed | comment }}
+version: '3'
+
+services:
+  peer:
+    image: ipfs/go-ipfs:{{ ipfs_version }}
+    restart: unless-stopped
+    volumes:
+      - "{{ ipfs_staging_dir }}:/export"
+      - "{{ ipfs_data_dir }}:/data/ipfs"
+    environment:
+      IPFS_PROFILE: "server"
+      VIRTUAL_HOST: "{{ ipfs_api_fqdn }}"
+      VIRTUAL_PORT: "5001"
+      LETSENCRYPT_HOST: "{{ ipfs_api_fqdn }}"
+    networks:
+      - nginx-proxy_reverse-proxy
+    ports:
+      - "4001:4001"
+      - "4001:4001/udp"
+
+networks:
+  nginx-proxy_reverse-proxy:
+    external: true

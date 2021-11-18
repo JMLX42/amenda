@@ -1,0 +1,50 @@
+---
+
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ ipfs_srv_dir }}"
+
+- name: create mounted directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rwx,o=rx
+  loop:
+    - "{{ ipfs_staging_dir }}"
+    - "{{ ipfs_data_dir }}"
+
+- name: template docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ ipfs_srv_dir }}/docker-compose.yml"
+
+# https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
+- name: set net.core.rmem_max
+  sysctl:
+    name: net.core.rmem_max
+    value: "2500000"
+    state: present
+
+- name: add nginx configuration
+  lineinfile:
+    path: "{{ ipfs_nginx_proxy_vhost_dir }}/{{ ipfs_api_fqdn }}"
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - "client_max_body_size 100M;"
+    - "proxy_request_buffering off;"
+  when: ipfs_nginx_proxy_vhost_dir | length > 0
+
+- name: start ipfs
+  docker_compose:
+    project_src: "{{ ipfs_srv_dir }}"
+  register: ipfs_start
+
+- name: configure ipfs
+  shell: cat config | jq '. * {{ ipfs_config | to_json }}' | tee config
+  args:
+    chdir: "{{ ipfs_data_dir }}"
+  when: ipfs_start is changed

@@ -25,6 +25,11 @@
           state: started
       tags:
         - security
+    - name: Install common packages
+      apt:
+        package: [jq, htop]
+      tags:
+        - misc  
     - block:
       - name: Enable the firewall
         ufw:
@@ -109,3 +114,21 @@
     - role: govlab.nextcloud
       tags:
         - cloud
+
+- hosts:
+    - ipfs
+  roles:
+    - role: govlab.ipfs
+      tags:
+        - ipfs
+  tasks:
+    - name: Allow the IPFS ports
+      ufw:
+        rule: allow
+        port: '{{ item }}'
+      retries: 3
+      delay: 3
+      register: result
+      until: result is succeeded
+      with_items:
+        - 4001

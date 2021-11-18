@@ -1,0 +1,8 @@
+---
+
+ipfs_api_fqdn: "ipfs.infra.{{ base_hostname }}"
+
+ipfs_nginx_proxy_vhost_dir: "/srv/nginx-proxy/vhost.d"
+
+ipfs_staging_dir: /data/ipfs/staging
+ipfs_data_dir: /data/ipfs/data
