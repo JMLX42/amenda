@@ -2,7 +2,7 @@
 
 ipfs_api_fqdn: "{{ ansible_host }}"
 
-ipfs_version: "master-2021-11-17-0c2f9d5"
+ipfs_version: "v0.11.0"
 
 ipfs_nginx_proxy_vhost_dir: ""
 
